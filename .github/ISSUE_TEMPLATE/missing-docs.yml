@@ -1,5 +1,5 @@
 name: Missing Documentation
-description: Ask for documentation if something is missing.
+description: Ask for documentation if something is missing. (Note: Things that are already on the original github page are not going to be added)
 labels: [documentation]
 body:
   - type: textarea
