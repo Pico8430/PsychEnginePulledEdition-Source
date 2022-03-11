@@ -224,6 +224,7 @@ class PlayState extends MusicBeatState
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
 	var timeTxt:FlxText;
+	var judgementCounter:FlxText;
 	var scoreTxtTween:FlxTween;
 
 	public static var campaignScore:Int = 0;
@@ -1030,6 +1031,15 @@ class PlayState extends MusicBeatState
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = !ClientPrefs.hideHud;
+		judgementCounter = new FlxText(20, 0, 0, "", 20);
+		judgementCounter.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		judgementCounter.borderSize = 2;
+		judgementCounter.borderQuality = 2;
+		judgementCounter.scrollFactor.set();
+		judgementCounter.cameras = [camHUD];
+		judgementCounter.screenCenter(Y);
+		judgementCounter.text = 'Sicks: ${sicks}\nGoods: ${goods}\nBads: ${bads}\nShits: ${shits}\nMisses: ${songMisses}';
+		add(judgementCounter);
 		add(scoreTxt);
 
 		botplayTxt = new FlxText(395, timeBarBG.y + 55, FlxG.width - 800, "Botplay ON", 32);
@@ -2258,7 +2268,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
+		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene && !isStoryMode)
 		{
 			openChartEditor();
 		}
@@ -2299,7 +2309,7 @@ class PlayState extends MusicBeatState
 					iconP2.animation.curAnim.curFrame = 1;
 		}
 
-		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene) {
+		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene && !isStoryMode) {
 			persistentUpdate = false;
 			paused = true;
 			cancelMusicFadeTween();
@@ -3520,7 +3530,7 @@ class PlayState extends MusicBeatState
 							sortedNotesList.push(daNote);
 							//notesDatas.push(daNote.noteData);
 						}
-						canMiss = true;
+						canMiss = false;
 					}
 				});
 				sortedNotesList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
@@ -4371,10 +4381,13 @@ class PlayState extends MusicBeatState
 			else if (songMisses >= 10) ratingFC = "Clear";
 			if (songMisses > 50 && songMisses < 300) ratingFC = "-Clear"
 			else if (songMisses >= 300) ratingFC = "Bad run";
+			if (songMisses > 500 && songMisses < 1000) ratingFC = "Very bad"
+			else if (songMisses >= 1000) ratingFC = "what";
 		}
 		setOnLuas('rating', ratingPercent);
 		setOnLuas('ratingName', ratingName);
 		setOnLuas('ratingFC', ratingFC);
+		judgementCounter.text = 'Sicks: ${sicks}\nGoods: ${goods}\nBads: ${bads}\nShits: ${shits}\nMisses: ${songMisses}';
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
