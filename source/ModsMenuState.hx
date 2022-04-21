@@ -18,6 +18,7 @@ import lime.utils.Assets;
 import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import sys.io.File;
+import flixel.input.keyboard.FlxKey;
 import sys.FileSystem;
 import haxe.Json;
 import haxe.format.JsonParser;
@@ -57,6 +58,7 @@ class ModsMenuState extends MusicBeatState
 	var buttonUp:FlxButton;
 	var buttonToggle:FlxButton;
 	var buttonsArray:Array<FlxButton> = [];
+	var debugKeys:Array<FlxKey>;
 
 	var installButton:FlxButton;
 	var removeButton:FlxButton;
@@ -70,6 +72,8 @@ class ModsMenuState extends MusicBeatState
 	{
 		Paths.destroyLoadedImages();
 		WeekData.setDirectoryFromWeek();
+
+		debugKeys = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -90,6 +94,11 @@ class ModsMenuState extends MusicBeatState
 		noModsTxt2.scrollFactor.set();
 		add(noModsTxt2);
 		visibleWhenNoMods.push(noModsTxt2);
+		noModsTxt3 = new Alphabet(0, 420, "OR PRESS 7 TO OPEN THE MOD DOWNLOADER", true, false, 0.05, 0.66);
+		noModsTxt3.screenCenter(X);
+		noModsTxt3.scrollFactor.set();
+		add(noModsTxt3);
+		visibleWhenNoMods.push(noModsTxt3);
 		if(FlxG.random.bool(0.1))
 		{
 			    noModsTxt3 = new Alphabet(0, 420, "BITCH.", true, false, 0.05, 0.66);
@@ -449,6 +458,13 @@ class ModsMenuState extends MusicBeatState
 			if(noModsTxt3 != null)
 				    noModsTxt3.alpha = 1 - Math.sin((Math.PI * noModsSine) / 180);
 		}
+
+		#if sys
+		if (FlxG.keys.anyJustPressed(debugKeys))
+		{
+			MusicBeatState.switchState(new ModDownloadState());
+		}
+		#end
 
 		if(canExit && controls.BACK)
 		{
